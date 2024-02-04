@@ -5,6 +5,9 @@ Repository for SD6125 Data Mining project as part of the Masters in Data Science
 
 Let's observe the following  collaboration structure to ensure that the code repository remains friendly, organised and transparent to all collaborators.
 
+- Do create a branch with your name and add your contributions there. Once you have finished, please make a pull request before merging into the main branch
+  - As far as possible, please observe the usual git protocols and workflows while balancing with the ease of contribution
+  - No approvers are needed to complete the pull requests, so feel free to merge your own PR into main at your own risk. 
 - Files should be organised into their respective subdirectory. For instance, notebooks should be under [notebooks](notebooks)
 - Do comment on the code if the code is meant to be shared with others for illustration/descriptive purposes.
 - If applicable, please annotate your name at the top of each file so others  can identify who is responsible for which artifacts.
