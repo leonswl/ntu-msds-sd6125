@@ -33,6 +33,23 @@ import numpy as np
 from sklearn.cluster import KMeans
 import argparse
 
+def _compute_val (dd_list:list) -> float:
+	"""
+	Function to calculate basic statistics 
+
+	Args:
+		dd_list [list]: list containing pairwise distance
+
+	Returns:
+		val [float]: val of pairwise distance
+	"""
+	# Estimate the value of T
+	mean = np.mean(dd_list)
+	std = np.std(dd_list)
+	val = (1.414*20*std)/(mean)
+
+	return val
+
 """
 Bucketization of similar centroids.
 """
@@ -141,7 +158,7 @@ def weightMatrixUpdated(global_centroids_list,clusters,dd_list,k_centers,avg_sco
 Core function of CNAK
 """
 
-def CNAK_core(data,gamma,K):
+def CNAK_core(data, gamma:float, K:int):
 	"""
     Core function of the proposed CNAK algorithm for learning K in k-means clustering.
 
@@ -181,12 +198,7 @@ def CNAK_core(data,gamma,K):
 	# Computation of CNAK score and forming K buckets with T_E similar centroids
 	avg_score, count, dd_list,k_centers = weightMatrix(centroids_list, dd_list, k_centers)
 
-	def _calculate_stats ()
-	
-	# Estimate the value of T
-	mean = np.mean(dd_list)
-	std = np.std(dd_list)
-	val = (1.414*20*std)/(mean)
+	val = _compute_val(dd_list=dd_list)
 	
 	global_centroids_list=[] # List to store all centroids
 	for centroids in (centroids_list):
@@ -211,9 +223,8 @@ def CNAK_core(data,gamma,K):
 
 		for centroids in ((centroids_list)):
 			global_centroids_list.append(centroids)
-		mean = np.mean(dd_list)
-		std = np.std(dd_list)
-		val = (1.414*20*std)/(mean)
+
+		val = _compute_val(dd_list)
 		
 	 # Compute average cluster centers
 	clusterCenterAverage = [np.mean(k_centers[i],axis=0) for i in range(len(k_centers))]
