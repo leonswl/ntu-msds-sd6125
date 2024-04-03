@@ -25,6 +25,34 @@ Files are organised based on the structure below. Feel free to extend the subdir
 - [Data](data): data artifacts, includes raw, staging or production data
 - [Assets](assets): for other relevant assets such as images, model  files etc.
 
+## src
+
+### Preprocessing
+
+`preprocess_data.py`
+
+Run the following command to execute the preprocessing module. There are 2 arguments available. If no file is given, the module exits.
+
+Preprocessing consist of 3 main steps:
+1. read the target dataset from raw directory and applied standardisation
+2. perform PCA based on input variance
+3. save pca into processed directory
+
+```
+# example of executing preprocessing script with file and variance arguments
+python3 -m src.preprocessing.preprocess_data --file=1 --variance=0.9
+
+# run with --help flag to see more details on the available arguments
+python3 -m src.preprocessing.preprocess_data --help
+```
+
+If no argument for file is specified, module exits with the following message.
+```
+python3 -m src.preprocessing.preprocess_data 
+
+$ No file is given. Module is exiting. Please specify a file for preprocessing
+```
+
 ## Installation & Usage
 
 Set up environments
