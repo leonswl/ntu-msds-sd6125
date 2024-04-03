@@ -33,7 +33,7 @@ import numpy as np
 from sklearn.cluster import KMeans
 import argparse
 
-def _compute_val (dd_list:list) -> float:
+def _compute_val(dd_list:list) -> float:
 	"""
 	Function to calculate basic statistics 
 
@@ -41,20 +41,19 @@ def _compute_val (dd_list:list) -> float:
 		dd_list [list]: list containing pairwise distance
 
 	Returns:
-		val [float]: val of pairwise distance
+		[float]: val of pairwise distance
 	"""
 	# Estimate the value of T
 	mean = np.mean(dd_list)
 	std = np.std(dd_list)
-	val = (1.414*20*std)/(mean)
+	return (1.414*20*std)/(mean)
 
-	return val
 
-"""
-Bucketization of similar centroids.
-"""
 
-def Bucketization(cluster1,cluster2,indexes,turn,centers):
+def Bucketization(cluster1, cluster2, indexes, turn, centers):
+	"""
+	Function to perform Bucketization of similar centroids.
+	"""
 	if turn==0:
 		for i in range(len(cluster1)):
 			centers[i].append(cluster1[i])
@@ -153,11 +152,6 @@ def weightMatrixUpdated(global_centroids_list,clusters,dd_list,k_centers,avg_sco
 	avg_score=avg_score/count
 	return avg_score, count, dd_list, k_centers
 
-
-"""
-Core function of CNAK
-"""
-
 def CNAK_core(data, gamma:float, K:int):
 	"""
     Core function of the proposed CNAK algorithm for learning K in k-means clustering.
@@ -184,7 +178,11 @@ def CNAK_core(data, gamma:float, K:int):
 		# Random sampling without replacement
 		#print("int(len(data)*gamma):",int(len(data)*gamma))
 		index=random.sample(range(len(data)),int(len(data)*gamma)) # build index
-		samples = [data[idx] for idx in index] # build samples using index
+		# build samples using index
+		samples=[]
+		for k in range(int(len(data)*gamma)):
+			temp=data[index[k]]
+			samples.append(temp) 
 
 		# K-means++ on sampled dataset
 		kmeans = KMeans(n_clusters=K,init='k-means++',n_init=20,max_iter=300,tol=0.0001).fit(samples)
@@ -198,6 +196,7 @@ def CNAK_core(data, gamma:float, K:int):
 	# Computation of CNAK score and forming K buckets with T_E similar centroids
 	avg_score, count, dd_list,k_centers = weightMatrix(centroids_list, dd_list, k_centers)
 
+	# estimate the value of T
 	val = _compute_val(dd_list=dd_list)
 	
 	global_centroids_list=[] # List to store all centroids
@@ -212,7 +211,11 @@ def CNAK_core(data, gamma:float, K:int):
 		centroids_list = []
 		for _ in range(T_S,T_E):
 			index=random.sample(range(len(data)), int(len(data)*gamma))
-			datax=[data[idx] for idx in index]
+			datax=[]
+			
+			for k in range(int(len(data)*gamma)):
+				temp=data[index[k]]
+				datax.append(temp)
 						
 			# K-means++ on sampled dataset
 			kmeans = KMeans(n_clusters=K, init='k-means++',   n_init=20, max_iter=300, tol=0.0001).fit(datax)
@@ -226,7 +229,7 @@ def CNAK_core(data, gamma:float, K:int):
 
 		val = _compute_val(dd_list)
 		
-	 # Compute average cluster centers
+	# Compute average cluster centers
 	clusterCenterAverage = [np.mean(k_centers[i],axis=0) for i in range(len(k_centers))]
 		  
 	return val, T_E, avg_score, clusterCenterAverage
@@ -236,7 +239,7 @@ def CNAK_core(data, gamma:float, K:int):
 Generating cluster Label for K_hat
 """
 
-def LabelGeneration(data,k_centers):
+def LabelGeneration(data,k_centers):  # sourcery skip: avoid-builtin-shadow
 	clusterLabel=[]
 	
 	clusters=[]
@@ -273,20 +276,14 @@ def CNAK(data, gamma:float=0.7, k_min:int=1, k_max:int=21):
 	print(" gamma:",gamma," K_min:",k_min," K_max:",k_max)
 	CNAK_score=[]
 	k_max_centers=[]
-	# file=open("CNAK_scores.csv","a")
 	for K in range(k_min,k_max):
 
 		val, T_E, avg_score, k_centers=CNAK_core(data,gamma,K)
 		CNAK_score.append(avg_score)
 		k_max_centers.append(k_centers)
-		# file.write(str(K))
-		# file.write(str(","))
-		# file.write(str(avg_score))
-		# file.write(str("\n"))
-		
-	# file.close()
+
 	K_hat=CNAK_score.index(min(CNAK_score))
-	print("K_hat:",K_hat+1)
+	# print("K_hat:",K_hat+1)
 	#~~~~~~~~Labels for K_hat~~~~~~~~~
 	clusterLabel = LabelGeneration(data,k_max_centers[K_hat])
 
