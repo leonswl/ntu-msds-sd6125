@@ -273,7 +273,7 @@ def CNAK(data, gamma:float=0.7, k_min:int=1, k_max:int=21):
     gamma and k_max are optional paraneters. The heuristic used in CNAK paper, can be used for computing gamma. 
     """
 
-	print(" gamma:",gamma," K_min:",k_min," K_max:",k_max)
+	# print(" gamma:",gamma," K_min:",k_min," K_max:",k_max)
 	CNAK_score=[]
 	k_max_centers=[]
 	for K in range(k_min,k_max):
